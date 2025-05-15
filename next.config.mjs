@@ -8,7 +8,8 @@ const nextConfig = {
   experimental: {
     serverActions: true,
   },
-  // output: 'export',
+  output: 'standalone',
+
   eslint: {
     ignoreDuringBuilds: true,
   },
