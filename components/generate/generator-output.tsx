@@ -55,6 +55,71 @@ export function GeneratorOutput({
     });
   };
 
+  // Function to download image
+  const downloadImage = async (imageUrl: string, promptText: string) => {
+    try {
+      // Start download spinner
+      toast({
+        title: t('generator.output.toast.download.title') || 'Downloading...',
+        description: t('generator.output.toast.download.downloading') || 'Your image is being downloaded.',
+      });
+
+      // Fetch the image
+      const response = await fetch(imageUrl);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch image');
+      }
+      
+      // Convert response to blob
+      const blob = await response.blob();
+      
+      // Create URL for download
+      const url = window.URL.createObjectURL(blob);
+      
+      // Create anchor element for download
+      const a = document.createElement('a');
+      
+      // Create filename from prompt (limited to first 30 chars) and add date
+      const promptSlug = promptText
+        .slice(0, 30)
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/[\s_-]+/g, '-');
+      
+      const date = new Date().toISOString().split('T')[0];
+      const filename = `image-${promptSlug}-${date}.png`;
+      
+      // Set download attributes
+      a.href = url;
+      a.download = filename;
+      
+      // Trigger download
+      document.body.appendChild(a);
+      a.click();
+      
+      // Clean up
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      // Show success message
+      toast({
+        title: t('generator.output.toast.download.title') || 'Download Complete',
+        description: t('generator.output.toast.download.success') || 'Image downloaded successfully.',
+      });
+    } catch (error) {
+      console.error('Download error:', error);
+      
+      // Show error message
+      toast({
+        title: t('generator.output.toast.download.title') || 'Download Error',
+        description: t('generator.output.toast.download.error') || 'Failed to download image.',
+        variant: 'destructive'
+      });
+    }
+  };
+
   const getGridCols = () => {
     return images.length === 1 ? 'grid-cols-1' :
            images.length === 2 ? 'grid-cols-2' : 
@@ -121,7 +186,7 @@ export function GeneratorOutput({
                     <p className="text-white text-sm line-clamp-2 mb-2">
                       {image.prompt}
                     </p>
-                    <Button variant="secondary" size="sm" className="w-full">
+                    <Button variant="secondary" size="sm" className="w-full" onClick={() => downloadImage(image.url, image.prompt)}>
                       <Download className="h-4 w-4 mr-2" /> {t('generator.output.actions.download')}
                     </Button>
                   </div>
@@ -202,7 +267,7 @@ export function GeneratorOutput({
                   </div>
                   
                   <div className="pt-4 flex flex-col gap-2">
-                    <Button className="w-full">
+                    <Button className="w-full" onClick={() => downloadImage(selectedImage.url, selectedImage.prompt)}>
                       <Download className="h-4 w-4 mr-2" /> {t('generator.output.details.actions.download')}
                     </Button>
                     <Button variant="outline" className="w-full">

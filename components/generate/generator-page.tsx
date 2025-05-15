@@ -36,7 +36,7 @@ const GeneratorPage = () => {
   const router = useRouter();
   const t = useTranslations();
 
-  // Mock function to simulate image generation
+  // Function to generate images using Replicate API
   const generateImages = async (formData: any) => {
     // 检查用户是否已登录，未登录则不执行生成
     if (!requireAuth()) {
@@ -45,35 +45,55 @@ const GeneratorPage = () => {
     
     setIsGenerating(true);
 
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
-    // Create mock generated images based on form data
-    const newImages: GeneratedImage[] = [];
-    const numOutputs = formData.numOutputs || 1;
-
-    for (let i = 0; i < numOutputs; i++) {
-      const placeholderUrls = [
-        'https://images.pexels.com/photos/3493777/pexels-photo-3493777.jpeg',
-        'https://images.pexels.com/photos/1910225/pexels-photo-1910225.jpeg',
-        'https://images.pexels.com/photos/3109807/pexels-photo-3109807.jpeg',
-        'https://images.pexels.com/photos/2832432/pexels-photo-2832432.jpeg',
-      ];
-
-      newImages.push({
-        id: crypto.randomUUID(),
-        url: placeholderUrls[i % placeholderUrls.length],
-        prompt: formData.prompt,
-        aspectRatio: formData.aspectRatio,
-        seed: formData.seed || Math.floor(Math.random() * 1000000),
-        steps: formData.steps || 1,
-        timestamp: new Date(),
+    try {
+      // Call Replicate API using the rewrite rule defined in next.config.mjs
+      const response = await fetch('/api/replicate/v1/models/black-forest-labs/flux-schnell/predictions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Prefer': 'wait',
+          'Authorization': 'Bearer r8_TnN084xPzJAoMXKnrVXowlMhcXmBuvl2ddXeS' 
+        },
+        body: JSON.stringify({
+          input: formData
+        })
       });
-    }
 
-    setGeneratedImages(newImages);
-    setHistory(prev => [...newImages, ...prev]);
-    setIsGenerating(false);
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      // Create generated images based on API response
+      const newImages: GeneratedImage[] = [];
+      
+      // Handle the API response
+      if (result.output) {
+        // Check if output is an array
+        const outputs = Array.isArray(result.output) ? result.output : [result.output];
+        
+        outputs.forEach((imageUrl: string) => {
+          newImages.push({
+            id: crypto.randomUUID(),
+            url: imageUrl,
+            prompt: formData.prompt,
+            aspectRatio: formData.aspectRatio,
+            seed: formData.seed || Math.floor(Math.random() * 1000000),
+            steps: formData.steps || 1,
+            timestamp: new Date(),
+          });
+        });
+      }
+
+      setGeneratedImages(newImages);
+      setHistory(prev => [...newImages, ...prev]);
+    } catch (error) {
+      console.error('Error generating images:', error);
+      // You might want to display an error message to the user
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
