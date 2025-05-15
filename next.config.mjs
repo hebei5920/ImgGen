@@ -7,6 +7,7 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig = {
   experimental: {
     serverActions: true,
+    runtime: 'edge',
   },
   output: 'standalone',
 
