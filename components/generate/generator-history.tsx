@@ -50,7 +50,7 @@ export const GeneratorHistory = ({ images }: GeneratorHistoryProps) => {
                   {t('generator.history.imageCount', { count: dateImages.length })}
                 </Badge>
               </div>
-
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {dateImages.map((image) => (
                   <Card key={image.id} className="overflow-hidden">
@@ -68,8 +68,8 @@ export const GeneratorHistory = ({ images }: GeneratorHistoryProps) => {
                       </p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
-                          <Badge variant="outline">{image.aspectRatio}</Badge>
-                          <Badge variant="outline">{image.steps} {t('generator.history.steps')}</Badge>
+                          <Badge variant="outline">{image.aspect_ratio}</Badge>
+                          <Badge variant="outline">{image.num_inference_steps} {t('generator.history.steps')}</Badge>
                         </div>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>

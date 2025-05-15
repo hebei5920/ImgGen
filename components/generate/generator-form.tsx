@@ -28,13 +28,13 @@ import { useTranslations } from 'next-intl';
 // Form schema validation
 const formSchema = z.object({
   prompt: z.string().min(3, { message: "Prompt must be at least 3 characters" }),
-  aspectRatio: z.string().default("1:1"),
-  numOutputs: z.number().min(1).max(4).default(1),
-  steps: z.number().min(1).max(4).default(1),
+  aspect_ratio: z.string().default("1:1"),
+  num_outputs: z.number().min(1).max(4).default(1),
+  num_inference_steps: z.number().min(1).max(4).default(4),
   seed: z.number().optional(),
   useSeed: z.boolean().default(false),
-  outputFormat: z.enum(["png", "jpg", "webp"]).default("png"),
-  outputQuality: z.number().min(1).max(100).default(90),
+  output_format: z.enum(["png", "jpg", "webp"]).default("webp"),
+  output_quality: z.number().min(1).max(100).default(80),
   megapixels: z.string().default("1"),
 });
 
@@ -55,13 +55,13 @@ export const GeneratorForm = ({ onGenerate, isGenerating, isDisabled = false }: 
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: "",
-      aspectRatio: "1:1",
-      numOutputs: 1,
-      steps: 1,
+      aspect_ratio: "1:1",
+      num_outputs: 1,
+      num_inference_steps: 4,
       seed: randomSeed,
       useSeed: false,
-      outputFormat: "png",
-      outputQuality: 90,
+      output_format: "webp",
+      output_quality: 80,
       megapixels: "1",
     },
   });
@@ -105,7 +105,7 @@ export const GeneratorForm = ({ onGenerate, isGenerating, isDisabled = false }: 
           {/* Aspect Ratio */}
           <FormField
             control={form.control}
-            name="aspectRatio"
+            name="aspect_ratio"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('generator.form.aspectRatio.label')}</FormLabel>
@@ -138,7 +138,7 @@ export const GeneratorForm = ({ onGenerate, isGenerating, isDisabled = false }: 
           {/* Number of Outputs */}
           <FormField
             control={form.control}
-            name="numOutputs"
+            name="num_outputs"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('generator.form.numOutputs.label', { value: field.value })}</FormLabel>
@@ -162,7 +162,7 @@ export const GeneratorForm = ({ onGenerate, isGenerating, isDisabled = false }: 
           {/* Inference Steps */}
           <FormField
             control={form.control}
-            name="steps"
+            name="num_inference_steps"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('generator.form.steps.label', { value: field.value })}</FormLabel>
@@ -244,7 +244,7 @@ export const GeneratorForm = ({ onGenerate, isGenerating, isDisabled = false }: 
           {/* Output Format */}
           <FormField
             control={form.control}
-            name="outputFormat"
+            name="output_format"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('generator.form.outputFormat.label')}</FormLabel>
@@ -282,7 +282,7 @@ export const GeneratorForm = ({ onGenerate, isGenerating, isDisabled = false }: 
           {/* Output Quality */}
           <FormField
             control={form.control}
-            name="outputQuality"
+            name="output_quality"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>{t('generator.form.outputQuality.label', { value: field.value })}</FormLabel>

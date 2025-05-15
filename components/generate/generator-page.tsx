@@ -17,9 +17,9 @@ export type GeneratedImage = {
   id: string;
   url: string;
   prompt: string;
-  aspectRatio: string;
+  aspect_ratio: string;
   seed: number;
-  steps: number;
+  num_inference_steps: number;
   timestamp: Date;
 };
 
@@ -51,11 +51,20 @@ const GeneratorPage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Prefer': 'wait',
+          // 'Prefer': 'wait',
           'Authorization': 'Bearer r8_TnN084xPzJAoMXKnrVXowlMhcXmBuvl2ddXeS' 
         },
         body: JSON.stringify({
-          input: formData
+          input: {
+            prompt: formData.prompt,
+            go_fast: true,
+            megapixels: formData.megapixels,
+            num_outputs: formData.num_outputs,
+            aspect_ratio: formData.aspect_ratio,
+            output_format: formData.output_format,
+            output_quality: formData.output_quality,
+            num_inference_steps: formData.num_inference_steps || formData.steps
+          }
         })
       });
 
@@ -68,8 +77,20 @@ const GeneratorPage = () => {
       // Create generated images based on API response
       const newImages: GeneratedImage[] = [];
       
-      // Handle the API response
-      if (result.output) {
+      // Handle the API response - image URL is in response.urls.stream
+      if (result.urls && result.urls.stream) {
+        // Create a single image with the stream URL
+        newImages.push({
+          id: crypto.randomUUID(),
+          url: result.urls.stream,
+          prompt: formData.prompt,
+          aspect_ratio: formData.aspect_ratio,
+          seed: formData.seed || Math.floor(Math.random() * 1000000),
+          num_inference_steps: formData.num_inference_steps || formData.steps || 4,
+          timestamp: new Date(),
+        });
+      } else if (result.output) {
+        // Fallback to previous handling for compatibility
         // Check if output is an array
         const outputs = Array.isArray(result.output) ? result.output : [result.output];
         
@@ -78,9 +99,9 @@ const GeneratorPage = () => {
             id: crypto.randomUUID(),
             url: imageUrl,
             prompt: formData.prompt,
-            aspectRatio: formData.aspectRatio,
+            aspect_ratio: formData.aspect_ratio,
             seed: formData.seed || Math.floor(Math.random() * 1000000),
-            steps: formData.steps || 1,
+            num_inference_steps: formData.num_inference_steps || formData.steps || 4,
             timestamp: new Date(),
           });
         });

@@ -152,6 +152,8 @@ export function GeneratorOutput({
                   width={500}
                   height={500}
                   className="object-cover w-full aspect-square"
+                  priority={true}
+                  unoptimized={true}
                 />
                 
                 {/* Hover Overlay */}
@@ -167,6 +169,10 @@ export function GeneratorOutput({
                         <DropdownMenuItem onClick={() => handleCopyPrompt(image.prompt)}>
                           <Clipboard className="h-4 w-4 mr-2" />
                           {t('generator.output.actions.copyPrompt')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => window.open(image.url, '_blank')}>
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          {t('generator.output.actions.openOriginal') || 'View Original'}
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Share2 className="h-4 w-4 mr-2" />
@@ -233,6 +239,8 @@ export function GeneratorOutput({
                     width={500}
                     height={500}
                     className="object-cover w-full"
+                    priority={true}
+                    unoptimized={true}
                   />
                 </div>
                 
@@ -242,10 +250,15 @@ export function GeneratorOutput({
                     <p className="text-sm">{selectedImage.prompt}</p>
                   </div>
                   
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-1">{t('generator.output.details.imageUrl') || 'Image URL'}</h4>
+                    <p className="text-xs text-muted-foreground truncate hover:text-clip">{selectedImage.url}</p>
+                  </div>
+                  
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <h4 className="text-sm font-medium text-muted-foreground mb-1">{t('generator.output.details.aspectRatio')}</h4>
-                      <Badge variant="outline">{selectedImage.aspectRatio}</Badge>
+                      <Badge variant="outline">{selectedImage.aspect_ratio}</Badge>
                     </div>
                     
                     <div>
@@ -255,7 +268,7 @@ export function GeneratorOutput({
                     
                     <div>
                       <h4 className="text-sm font-medium text-muted-foreground mb-1">{t('generator.output.details.steps')}</h4>
-                      <Badge variant="outline">{selectedImage.steps}</Badge>
+                      <Badge variant="outline">{selectedImage.num_inference_steps}</Badge>
                     </div>
                     
                     <div>
@@ -270,7 +283,7 @@ export function GeneratorOutput({
                     <Button className="w-full" onClick={() => downloadImage(selectedImage.url, selectedImage.prompt)}>
                       <Download className="h-4 w-4 mr-2" /> {t('generator.output.details.actions.download')}
                     </Button>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full" onClick={() => window.open(selectedImage.url, '_blank')}>
                       <ExternalLink className="h-4 w-4 mr-2" /> {t('generator.output.details.actions.openEditor')}
                     </Button>
                   </div>
