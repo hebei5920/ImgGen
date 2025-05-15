@@ -10,8 +10,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 
 const inter = Inter({ subsets: ['latin'] });
-export const runtime = 'edge';
-export const metadata: Metadata = {
+ export const metadata: Metadata = {
   metadataBase: new URL('https://localhost:3000'),
   title: 'ImageGen Portal - Create AI Images Easily',
   description: 'Generate beautiful AI images with customizable parameters',

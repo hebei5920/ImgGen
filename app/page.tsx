@@ -4,7 +4,7 @@ import { FeaturesSection } from '@/components/sections/features-section';
 import { GallerySection } from '@/components/sections/gallery-section';
 import { CTASection } from '@/components/sections/cta-section';
 import LoadingSpinner from '@/components/ui/loading-spinner';
-export const runtime = 'edge';
+
 export default function Home() {
   return (
     <div className="flex flex-col w-full">

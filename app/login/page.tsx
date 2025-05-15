@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { RefreshCw } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { useTranslations } from 'next-intl';
-export const runtime = 'edge';
+ 
 const LoginPage = () => {
   const { isAuthenticated, login } = useAuth();
   const router = useRouter();

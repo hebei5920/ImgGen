@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import GeneratorPage from '@/components/generate/generator-page';
 
-export const runtime = 'edge';
 
 export const metadata: Metadata = {
   title: 'Generate Images - ImageGen Portal',
